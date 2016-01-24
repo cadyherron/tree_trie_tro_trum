@@ -27,10 +27,12 @@ class DictionaryTree
     letters.each do |letter|
       # if current letter's parent has a child that is the same
       # letter that we're adding, don't add this letter as a child
-      unless current_node.children.find { |current_node| current_node.letter == letter }
-        new_letter = LetterNode.new(letter, nil, [], current_node, current_node.depth+1)
-        current_node.children << new_letter
-        current_node = new_letter
+      if next_node = current_node.children.find {|child| child.letter == letter}
+        current_node = next_node
+      elsif
+        next_node = LetterNode.new(letter, nil, [], current_node, current_node.depth+1)
+        current_node.children << next_node
+        current_node = next_node
       end
     end
     current_node.definition = definition
@@ -110,7 +112,7 @@ class DictionaryTree
     current_node = find_node(word)
     return false unless current_node
     unless current_node.children.empty?
-      return node.definition = nil
+      return current_node.definition = nil
     end
     until current_node.parent.definition || current_node.parent.children.size > 1 || current_node.parent == @root
       current_node = current_node.parent
@@ -121,17 +123,19 @@ class DictionaryTree
 end
 
 
-dt = DictionaryTree.new([['apple', 'fruit'], ['cat', 'animal'], ['apiary', 'birds']])
+# dt = DictionaryTree.new([['apple', 'Fruit and software'], ['a', 'Quite possibly the shortest word ever'], ['at', 'Location in a place or position'], ['attribute', 'Quality or characteristic of something'], ['cat', 'A feline animal'], ['catch', 'Are ya gonna throw me something?'], ['zebra', 'Do not think this if you hear hoofbeats']])
 # pp dt.root
-# p dt.num_letters
+
 # dt.insert_word('apiary', 'birds')
 
-p dt.num_words
-p dt.num_letters
-p dt.depth
-dt.insert_word('catch', 'the ball')
-p dt.num_letters
-p dt.num_words
+# p dt.num_words
+# p dt.num_letters
+# p dt.depth
 
 # dt.remove_word('cat')
-# pp dt.root
+# p dt.num_words
+# p dt.num_letters
+# p dt.depth
+
+
+# p dt.definition_of('catch')
